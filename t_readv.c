@@ -54,5 +54,10 @@ int main(int argc,char *argv[])
 		printf("Write fewer byts than required\n");
 	
 	printf("total required:%ld; bytes write:%ld\n",(long) totRequired,(long) numWrite);
+	if(close(fd))
+		errExit("close read");
+	if(close(fd2))
+		errExit("close write");
+
 	exit(EXIT_SUCCESS);
 }
