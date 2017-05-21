@@ -1,4 +1,4 @@
-#define	_BSD_SOURCE
+#define _BSD_SOURCE
 #define _XOPEN_SOURCE
 #include<unistd.h>
 #include<limits.h>
@@ -6,23 +6,24 @@
 #include<shadow.h>
 #include"tlpi_hdr.h"
 
-int main(int argc,char* argv[])
+
+int main(int argc,char * argv[])
 {
-	char *username,*password,*encrypted,*p;
+	char *username,*password,*ebcrypted,*p;
 	struct passwd *pwd;
 	struct spwd *spwd;
-	Boolean authOK;
+	Boolean authOk;
 	size_t len;
 	long lnmax;
-	lnmax=sysconf(_SC_LOGIN_NAME_MAX);
+	lnmax=sysconf(_SG_LOGIN_NAME_MAX);
 	if(lnmax==-1)
-		lnmax=256;
+	lnmax=256;
 	
 	username=malloc(lnmax);
 	if(username==NULL)
 		errExit("malloc");
 	
-	printf("Username: ");
+	printf("Username:");
 	fflush(stdout);
 	if(fgets(username,lnmax,stdin)==NULL)
 		exit(EXIT_FAILURE);
@@ -31,34 +32,32 @@ int main(int argc,char* argv[])
 	if(username[len-1]=='\n')
 		username[len-1]='\0';
 
-	pwd=getpwnam(username);
+	pwd=getpnam(username);
 	if(pwd==NULL)
 		fatal("couldn't get password record");
 	spwd=getspnam(username);
-	if(spwd==NULL && errno==EACCES)
+	if(spwd==NULL&&errno==EACCES)
 		fatal("no permission to read shadow password file");
-
+	
 	if(spwd!=NULL)
 		pwd->pw_passwd=spwd->sp_pwdp;
-
-	password=getpass("Passwod: ");
 	
-	encrypted=crypt(password,pwd->pw_passwd);
-	for(p=password;*p!='\0';)	
+	password=getpassword("Password:");
+	
+	
+	encrypted=crypt(password,pw->pw_passwd);
+	for(p=password;*p!='\0')
 		*p++='\0';
 	
-	if(encrypted==NULL)
+	if(encrypted=NULL)
 		errExit("crypt");
 	
-	authOK=strcmp(encrypted,pwd->pw_passwd)==0;
-	if(!authOK)
-	{
-		printf("Incorrect password\n");
-		exit(EXIT_FAILURE);
+	authOk=strcmp(encrypted,pwd->pw_passwd)==0;
+	if(!authOk){
+	printf("Incorrect password\n");
+	exit(EXIT_FAILURE);
 	}
 	
-	printf("Successfully authenticated: UID=%ld\n",(long)pwd->pw_uid);
-	
+	printf("Successfully authenticated:UID=%ld\n",(long) pwd->pwd_uid);
 	exit(EXIT_SUCCESS);
 }
-
